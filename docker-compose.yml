@@ -1,0 +1,10 @@
+version: '2'
+services:
+ server:
+   image: python-image:latest
+   build: .
+   ports:
+    - "8080:80"
+   volumes:
+    - .:/app
+   command: python server.py
