@@ -1,0 +1,2 @@
+POST http://localhost:7099/recipes
+content-type: application/json
