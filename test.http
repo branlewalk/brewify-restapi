@@ -2,10 +2,11 @@ POST http://localhost:7099/recipes
 content-type: application/json
 
 {
+    "recipe_id" : "7",
     "recipe_name": "Another Recipe", 
     "recipe_method" : "All-Grain", 
     "recipe_srm" : "10", 
-    "recipe_batch" : "10",
+    "recipe_batch_size" : "20",
     "recipe_rating" : "3",
     "recipe_description" : "Second Recipe",
     "style_id" : "2",
@@ -18,7 +19,7 @@ content-type: application/json
                 "malt_ingred_time" : "60",
                 "malt_ingred_type" : "Wort",
                 "malt_ingred_temp" : "148.2",
-                "malt_ingred_stage" : "Infusion Step 1",
+                "malt_ingred_stage" : "Infusion Step 1"
             }
         ],
         "yeast" : [
@@ -26,7 +27,7 @@ content-type: application/json
                 "yeast_id" : "42",
                 "yeast_ingred_qty" : "1",
                 "yeast_ingred_starter" : "true",
-                "yeast_ingred_time" : "14",
+                "yeast_ingred_time" : "14"
             }
         ],
         "hops" : [
@@ -36,6 +37,6 @@ content-type: application/json
                 "hops_ingred_time" : "15",
                 "hops_ingred_use" : "Boil"
             }
-        ],
+        ]
     }
 }

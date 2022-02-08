@@ -1,20 +1,25 @@
+import json
+
 class recipe:
     
     def __init__(self, json):
-        self.recipe_id = json["recipe_id"] if 'recipe_id' in json else None
-        self.recipe_name = json["recipe_name"] if 'recipe_name' in json else None
-        self.recipe_method = json["recipe_method"] if 'recipe_method' in json else None
-        self.recipe_srm = json["recipe_srm"] if 'recipe_srm' in json else None
-        self.recipe_batch_size = json["recipe_batch_size"] if 'recipe_batch_size' in json else None
-        self.recipe_rating = json["recipe_rating"] if 'recipe_rating' in json else None
-        self.recipe_description = json["recipe_description"] if 'recipe_description' in json else None
-        self.style_id = json["style_id"] if 'style_id' in json else None
-        self.image_id = json["image_id"] if 'image_id' in json else None
-        self.notes_id = json["notes_id"] if 'notes_id' in json else None
+        self.recipe_id = get_value('recipe_id', json)
+        self.recipe_name = get_value('recipe_name', json) 
+        self.recipe_method = get_value('recipe_method', json) 
+        self.recipe_srm = get_value('recipe_srm', json)
+        self.recipe_batch_size = get_value('recipe_batch_size', json)
+        self.recipe_rating = get_value('recipe_rating', json)
+        self.recipe_description = get_value('recipe_description', json)
+        self.style_id = get_value('style_id', json)
+        self.image_id = get_value('image_id', json)
+        self.notes_id = get_value('notes_id', json)
         self.malts = populate_malts(json['ingredient_malts']) if 'ingredient_malts' in json else list()
         self.yeasts = populate_yeasts(json['ingredient_yeasts']) if 'ingredient_yeasts' in json else list()
         self.hops = populate_hops(json['ingredient_hops']) if 'ingredient_hops' in json else list()
         self.others = populate_others(json['ingredient_others']) if 'ingredient_others' in json else list()
+        
+    def toJson(self):
+        return json.dumps(self, default=lambda o: o.__dict__)
     
 class malt:
     
@@ -89,3 +94,6 @@ def populate_others(json_others):
         other_ingred_time = o['other_ingred_time'] if 'other_ingred_time' in o else None 
         others.Add(other_id, other_ingred_qty, other_ingred_time)
     return others
+
+def get_value(index, json):
+    return json[index] if (index in json and json[index] != '') else None
