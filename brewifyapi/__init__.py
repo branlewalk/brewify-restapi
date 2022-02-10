@@ -13,9 +13,9 @@ def create_app(config_env='DevConfig'):
 
     db.init_app(app)
     
-    @app.route('/')
+    @app.route('/', methods=['GET'])
     def index():
-        pass
+        return 'No entries here so far'
 
     @app.route('/recipes', methods=['POST'])
     def create_recipe():

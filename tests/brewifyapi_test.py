@@ -1,14 +1,16 @@
 import pytest
-from brewifyapi import create_app
+
+from brewifyapi import create_app, db
 
 @pytest.fixture
 def client():
-    app = create_app()
-    app.config["TESTING"] = True
+    app = create_app('TestConfig')
+
     with app.test_client() as client:
+        with app.app_context():
+            db.open_connection()
         yield client
-
-
-def test_square(client):
-    rv = client.get("/square?number=8")
-    assert b"64" == rv.data
+        
+def test_empty_db(client):
+    rv = client.get('/')
+    assert b'No entries here so far' in rv.data
