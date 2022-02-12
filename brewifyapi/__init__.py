@@ -1,3 +1,4 @@
+import json
 import os
 from varname import nameof
 from flask import Flask, jsonify, render_template, request
@@ -17,7 +18,7 @@ def create_app(config_env='DevConfig'):
     def index():
         return 'No entries here so far'
 
-    @app.route('/recipes', methods=['POST'])
+    @app.route('/recipe', methods=['POST'])
     def create_recipe():
         r = recipe(request.get_json())
 

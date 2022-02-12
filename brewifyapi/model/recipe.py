@@ -6,13 +6,13 @@ class recipe:
         self.recipe_id = get_value('recipe_id', json)
         self.recipe_name = get_value('recipe_name', json) 
         self.recipe_method = get_value('recipe_method', json) 
-        self.recipe_srm = get_value('recipe_srm', json)
-        self.recipe_batch_size = get_value('recipe_batch_size', json)
-        self.recipe_rating = get_value('recipe_rating', json)
+        self.recipe_srm = int(get_value('recipe_srm', json))
+        self.recipe_batch_size = float(get_value('recipe_batch_size', json))
+        self.recipe_rating = int(get_value('recipe_rating', json))
         self.recipe_description = get_value('recipe_description', json)
-        self.style_id = get_value('style_id', json)
-        self.image_id = get_value('image_id', json)
-        self.notes_id = get_value('notes_id', json)
+        self.style_id = int(get_value('style_id', json))
+        self.image_id = int(get_value('image_id', json))
+        self.notes_id = int(get_value('notes_id', json)) if get_value('notes_id', json) != None else None
         self.malts = populate_malts(json['ingredient_malts']) if 'ingredient_malts' in json else list()
         self.yeasts = populate_yeasts(json['ingredient_yeasts']) if 'ingredient_yeasts' in json else list()
         self.hops = populate_hops(json['ingredient_hops']) if 'ingredient_hops' in json else list()
@@ -24,9 +24,9 @@ class recipe:
 class malt:
     
     def __init__(self, malt_id, malt_ingred_qty, malt_ingred_time, malt_ingred_type, malt_ingred_temp, malt_ingred_stage):
-        self.malt_id = malt_id
-        self.malt_ingred_qty = malt_ingred_qty
-        self.malt_ingred_time = malt_ingred_time
+        self.malt_id = int(malt_id)
+        self.malt_ingred_qty = float(malt_ingred_qty)
+        self.malt_ingred_time = int(malt_ingred_time)
         self.malt_ingred_type = malt_ingred_type
         self.malt_ingred_temp = malt_ingred_temp
         self.malt_ingred_stage = malt_ingred_stage
@@ -34,25 +34,25 @@ class malt:
 class yeast:
     
     def __init__(self, yeast_id, yeast_ingred_qty, yeast_ingred_starter, yeast_ingred_time):
-        self.yeast_id = yeast_id
-        self.yeast_ingred_qty = yeast_ingred_qty
+        self.yeast_id = int(yeast_id)
+        self.yeast_ingred_qty = float(yeast_ingred_qty)
         self.yeast_ingred_starter = yeast_ingred_starter
-        self.yeast_ingred_time = yeast_ingred_time
+        self.yeast_ingred_time = int(yeast_ingred_time)
         
 class hops:
     
     def __init__(self, hops_id, hops_ingred_qty, hops_ingred_time, hops_ingred_use):
-        self.hops_id = hops_id
-        self.hops_ingred_qty = hops_ingred_qty
-        self.hops_ingred_time = hops_ingred_time
+        self.hops_id = int(hops_id)
+        self.hops_ingred_qty = float(hops_ingred_qty)
+        self.hops_ingred_time = int(hops_ingred_time)
         self.hops_ingred_use = hops_ingred_use
         
 class other:
     
     def __init__(self, other_id, other_ingred_qty, other_ingred_time):  
-        self.other_id = other_id
-        self.other_ingred_qty = other_ingred_qty
-        self.other_ingred_time = other_ingred_time
+        self.other_id = int(other_id)
+        self.other_ingred_qty = float(other_ingred_qty)
+        self.other_ingred_time = int(other_ingred_time)
         
 def populate_malts(json_malts):
     malts = list()
