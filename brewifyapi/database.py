@@ -55,3 +55,13 @@ class Database:
                 self.conn.close()
                 self.conn = None
                 print('Database connection closed.')
+
+    # Deprecated
+    def call_stored_procedure(self, sproc, params):
+        self.open_connection()
+        cursor = self.conn.cursor()
+        cursor.callproc(sproc, params)
+        cursor.execute(f'SELECT @_{sproc}_{len(params)-1}')
+        result = cursor.fetchone()
+        self.conn.commit()
+        return result[0]

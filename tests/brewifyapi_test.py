@@ -11,7 +11,27 @@ def client():
         with app.app_context():
             db.open_connection()
         yield client
-
+    
+def test_index_route(client):
+    response = client.get('/')
+    assert b'No entries here so far' in response.data
+    
+def test_recipe_post(client):
+    response = client.post('/recipe/', 
+                           data=json.dumps(recipe),
+                           headers={"Content-Type": "application/json"})
+    
+    data = json.loads(response.data)
+    assert data['recipe_id'] == 7
+    assert data['recipe_name'] in 'Another Recipe'
+    assert data['recipe_method'] in 'All-Grain'
+    assert data['recipe_srm'] == 10
+    assert data['recipe_batch_size'] == 20
+    assert data['recipe_rating'] == 3
+    assert data['recipe_description'] in 'Second Recipe'
+    assert data['style_id'] == 2
+    assert data['image_id'] == 2
+    
 recipe = {
     "recipe_id" : "7",
     "recipe_name": "Another Recipe", 
@@ -50,25 +70,4 @@ recipe = {
             }
         ]
     }
-}
-    
-def test_index_route(client):
-    response = client.get('/')
-    assert b'No entries here so far' in response.data
-    
-def test_recipe_post(client):
-    response = client.post('/recipe', 
-                           data=json.dumps(recipe),
-                           headers={"Content-Type": "application/json"})
-    
-    data = json.loads(response.data)
-    assert data['recipe_id'] == 7
-    assert data['recipe_name'] in 'Another Recipe'
-    assert data['recipe_method'] in 'All-Grain'
-    assert data['recipe_srm'] == 10
-    assert data['recipe_batch_size'] == 20
-    assert data['recipe_rating'] == 3
-    assert data['recipe_description'] in 'Second Recipe'
-    assert data['style_id'] == 2
-    assert data['image_id'] == 2
-    
+}   
