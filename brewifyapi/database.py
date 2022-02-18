@@ -51,10 +51,22 @@ class Database:
             print(e)
             sys.exit()
         finally:
-            if self.conn:
-                self.conn.close()
-                self.conn = None
-                print('Database connection closed.')
+            self.close_connection()
+            
+    def call_get_sproc(self, sproc):
+        try:
+            self.open_connection()
+            with self.conn.cursor() as cursor:
+                cursor.callproc(sproc)
+                result = cursor.fetchall()
+                self.conn.commit()
+                cursor.close()
+                return result
+        except pymysql.MySQLError as e:
+            print(e)
+            sys.exit()
+        finally:
+            self.close_connection()
 
     # Deprecated
     def call_stored_procedure(self, sproc, params):
