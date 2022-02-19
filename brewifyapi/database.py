@@ -37,11 +37,14 @@ class Database:
                 self.conn = None
                 print('Database connection closed.')
     
-    def call_sproc(self, sproc, params):
+    def call_sproc_fetchone(self, sproc, params=None):
         try:
             self.open_connection()
             with self.conn.cursor() as cursor:
-                cursor.callproc(sproc, params)
+                if params != None:
+                    cursor.callproc(sproc, params)
+                else:
+                    cursor.callproc(sproc)
                 cursor.execute(f'SELECT @_{sproc}_{len(params)-1}')
                 result = cursor.fetchone()
                 self.conn.commit()
@@ -53,11 +56,14 @@ class Database:
         finally:
             self.close_connection()
             
-    def call_get_sproc(self, sproc):
+    def call_sproc_fetchall(self, sproc, params=None):
         try:
             self.open_connection()
             with self.conn.cursor() as cursor:
-                cursor.callproc(sproc)
+                if params != None:
+                    cursor.callproc(sproc, params)
+                else:
+                    cursor.callproc(sproc)
                 result = cursor.fetchall()
                 self.conn.commit()
                 cursor.close()

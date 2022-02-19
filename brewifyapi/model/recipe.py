@@ -46,6 +46,10 @@ class Recipe:
         self.style_id = db_result[9]
         self.image_id = db_result[10]
         self.notes_id = db_result[11]
+        self.malts = list()
+        self.yeasts = list()
+        self.hops = list()
+        self.others = list()
         
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__)

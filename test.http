@@ -2,7 +2,7 @@ POST http://localhost:5000/recipe
 content-type: application/json
 
 {
-    "recipe_id" : "",
+    "recipe_id" : "4",
     "recipe_name": "Yet Another Recipe", 
     "recipe_method" : "All-Grain", 
     "recipe_srm" : "10", 
@@ -42,6 +42,18 @@ content-type: application/json
                 "hops_ingred_qty" : "2",
                 "hops_ingred_time" : "15",
                 "hops_ingred_use" : "Boil"
+            }
+        ],
+        "other" : [
+            {
+                "other_id" : "2",
+                "other_ingred_qty" : "2",
+                "other_ingred_time" : "15"
+            },
+                        {
+                "other_id" : "1",
+                "other_ingred_qty" : "1",
+                "other_ingred_time" : "15"
             }
         ]
     }
