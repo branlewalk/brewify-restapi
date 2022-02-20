@@ -28,14 +28,14 @@ class Database:
         except pymysql.MySQLError as e:
             print(e)
             sys.exit()
-        finally:
-            print('Connection opened successfully.')
+        # finally:
+            # change to logging print('Connection opened successfully.')
             
     def close_connection(self):
         if self.conn:
                 self.conn.close()
                 self.conn = None
-                print('Database connection closed.')
+                # change to logging print('Database connection closed.')
     
     def call_sproc_fetchone(self, sproc, params=None):
         try:
@@ -73,13 +73,3 @@ class Database:
             sys.exit()
         finally:
             self.close_connection()
-
-    # Deprecated
-    def call_stored_procedure(self, sproc, params):
-        self.open_connection()
-        cursor = self.conn.cursor()
-        cursor.callproc(sproc, params)
-        cursor.execute(f'SELECT @_{sproc}_{len(params)-1}')
-        result = cursor.fetchone()
-        self.conn.commit()
-        return result[0]

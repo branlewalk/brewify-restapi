@@ -1,14 +1,5 @@
 import json
 
-class Recipes:
-
-    def __init__(self):
-        self.recipes = list()
-    
-    def toJson(self):
-        print(self.recipes)
-        return json.dumps(self, default=lambda o: o.__dict__)
-
 class Recipe:
     
     def __init__(self, *args, **kwargs):
