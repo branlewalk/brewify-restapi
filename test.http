@@ -15,11 +15,7 @@ content-type: application/json
         "malt" : [
             {
                 "malt_id" : "15",
-                "malt_ingred_qty" : "10",
-                "malt_ingred_time" : "120",
-                "malt_ingred_type" : "Wort",
-                "malt_ingred_temp" : "148.2",
-                "malt_ingred_stage" : "Infusion Step 1"
+                "malt_ingred_qty" : "10"
             }
         ],
         "yeast" : [
@@ -59,6 +55,12 @@ content-type: application/json
     }
 }
 
-###
-
+### Get All Recipes
 GET http://localhost:5000/recipe
+
+### Get Recipe by Recipe ID
+GET http://localhost:5000/recipe/2
+
+### Soft Delete a recipe
+DELETE http://localhost:5000/recipe/1
+

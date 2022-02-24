@@ -10,7 +10,8 @@ def create_app(config_env='DevConfig'):
     app = Flask(__name__)
     app.url_map.strict_slashes = False
     app.config.from_object(f'brewifyapi.config.{config_env}')  
-
+    app.app_context()
+    
     db.init_app(app)
     
     from brewifyapi.blueprints.recipe import recipe_blueprint

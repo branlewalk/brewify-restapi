@@ -13,6 +13,7 @@ class Database:
         self.database = app.config['DB_DATABASE']
         self.port = app.config['DB_PORT']
         self.timeout = 5
+        self.logger = app.logger
         
     def open_connection(self):
         try:
@@ -26,16 +27,17 @@ class Database:
                     connect_timeout=self.timeout 
                     )
         except pymysql.MySQLError as e:
-            print(e)
-            sys.exit()
-        # finally:
-            # change to logging print('Connection opened successfully.')
+            self.logger.error(e)
+            #sys.exit()
+            raise e
+        finally:
+            self.logger.debug('Connection opened successfully.')
             
     def close_connection(self):
         if self.conn:
                 self.conn.close()
                 self.conn = None
-                # change to logging print('Database connection closed.')
+                self.logger.debug('Database connection closed.')
     
     def call_sproc_fetchone(self, sproc, params=None):
         try:
@@ -51,8 +53,8 @@ class Database:
                 cursor.close()
                 return result[0]
         except pymysql.MySQLError as e:
-            print(e)
-            sys.exit()
+            self.logger.error(e)
+            raise e
         finally:
             self.close_connection()
             
@@ -69,7 +71,8 @@ class Database:
                 cursor.close()
                 return result
         except pymysql.MySQLError as e:
-            print(e)
-            sys.exit()
+            self.logger.error(e)
+            raise e
+            #sys.exit()
         finally:
             self.close_connection()

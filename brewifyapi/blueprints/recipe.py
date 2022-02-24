@@ -1,9 +1,12 @@
+from typing import Text
 from flask import jsonify, Blueprint, request, current_app
 from brewifyapi import db
 from brewifyapi.model.recipe import Recipe, Malt, Yeast, Hop, Other
 import json
+import pymysql
 
 recipe_blueprint = Blueprint('recipe', __name__)
+
 
 @recipe_blueprint.route('/', methods=['POST'])
 def create_recipe():
@@ -14,9 +17,15 @@ def create_recipe():
               recipe.recipe_rating, recipe.recipe_description, recipe.style_id, recipe.image_id,
               recipe.notes_id, recipe.recipe_id)
     
-    recipe.recipe_id = db.call_sproc_fetchone(sproc, params)
-    create_recipe_ingredients(recipe)
-    
+    try:
+        recipe_id = db.call_sproc_fetchone(sproc, params)
+        if recipe_id is None:
+            current_app.logger.warning(f'No recipe with recipe ID: {recipe.recipe_id} was found')
+            raise pymysql.MySQLError(f'Unable to find recipe id: {recipe.recipe_id}')
+        recipe.recipe_id = recipe_id
+        create_recipe_ingredients(recipe)
+    except pymysql.MySQLError as e:
+        return f'{e}', 400
     return recipe.toJson()
 
 @recipe_blueprint.route('/', methods=['GET'])
@@ -25,7 +34,7 @@ def get_recipes():
     result = db.call_sproc_fetchall(sproc)
     recipes = map_recipes(result)
     if recipes is None:
-        return 400
+        return 'Recipes Not Found', 400
     return json.dumps(recipes, default=lambda o: o.__dict__)
 
 @recipe_blueprint.route('/<recipe_id>', methods=['GET'])
@@ -90,23 +99,43 @@ def map_ingredients(recipe):
                 Other(o[0], o[2], o[3]))
         
 def create_recipe_ingredients(r):
-    if len(r.malts) > 0:
-        for m in r.malts:
-            sproc = 'sp_store_ingredient_malt'
-            params = (m.malt_id, r.recipe_id, m.malt_ingred_qty, m.malt_ingred_time, m.malt_ingred_type, m.malt_ingred_temp, m.malt_ingred_stage)
-            db.call_sproc_fetchone(sproc, params)
-    if len(r.yeasts) > 0:
-        for y in r.yeasts:
-            sproc = 'sp_store_ingredient_yeast'
-            params = (y.yeast_id, r.recipe_id, y.yeast_ingred_qty, y.yeast_ingred_starter, y.yeast_ingred_time)
-            db.call_sproc_fetchone(sproc, params)
-    if len(r.hops) > 0:
-        for h in r.hops:
-            sproc = 'sp_store_ingredient_hops'
-            params = (h.hops_id, r.recipe_id, h.hops_ingred_qty, h.hops_ingred_time, h.hops_ingred_use)
-            db.call_sproc_fetchone(sproc, params)
-    if len(r.others) > 0:
-        for o in r.others:
-            sproc = 'sp_store_ingredient_other'
-            params = (o.other_id, r.recipe_id, o.other_ingred_qty, o.other_ingred_time)
-            db.call_sproc_fetchone(sproc, params)
+    try:
+        if len(r.malts) > 0:
+            for m in r.malts:
+                sproc = 'sp_store_ingredient_malt'
+                params = (m.malt_id, r.recipe_id, m.malt_ingred_qty, m.malt_ingred_time, m.malt_ingred_type, m.malt_ingred_temp, m.malt_ingred_stage)
+                db.call_sproc_fetchone(sproc, params)
+    except pymysql.MySQLError as e:
+        unable_to_load('malts', r.recipe_id)
+    try:
+        if len(r.yeasts) > 0:
+            for y in r.yeasts:
+                sproc = 'sp_store_ingredient_yeast'
+                params = (y.yeast_id, r.recipe_id, y.yeast_ingred_qty, y.yeast_ingred_starter, y.yeast_ingred_time)
+                db.call_sproc_fetchone(sproc, params)
+    except pymysql.MySQLError as e:
+        unable_to_load('yeasts', r.recipe_id)
+    try:
+        if len(r.hops) > 0:
+            for h in r.hops:
+                sproc = 'sp_store_ingredient_hops'
+                params = (h.hops_id, r.recipe_id, h.hops_ingred_qty, h.hops_ingred_time, h.hops_ingred_use)
+                db.call_sproc_fetchone(sproc, params)
+    except pymysql.MySQLError as e:
+        unable_to_load('hops', r.recipe_id)
+    try:
+        if len(r.others) > 0:
+            for o in r.others:
+                sproc = 'sp_store_ingredient_other'
+                params = (o.other_id, r.recipe_id, o.other_ingred_qty, o.other_ingred_time)
+                db.call_sproc_fetchone(sproc, params)
+    except pymysql.MySQLError as e:
+        unable_to_load('others', r.recipe_id)
+    
+def unable_to_load(name, recipe_id):
+    delete_recipe_hard(recipe_id)
+    raise pymysql.MySQLError(f'Unable to load {name}, rolling back recipe')
+
+def delete_recipe_hard(recipe_id):
+    sproc = 'sp_remove_recipe_hard'
+    db.call_sproc_fetchone(sproc, [recipe_id])

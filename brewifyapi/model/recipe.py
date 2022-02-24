@@ -50,7 +50,7 @@ class Malt:
     def __init__(self, malt_id, malt_ingred_qty, malt_ingred_time, malt_ingred_type, malt_ingred_temp, malt_ingred_stage):
         self.malt_id = int(malt_id)
         self.malt_ingred_qty = float(malt_ingred_qty)
-        self.malt_ingred_time = int(malt_ingred_time)
+        self.malt_ingred_time = malt_ingred_time
         self.malt_ingred_type = malt_ingred_type
         self.malt_ingred_temp = malt_ingred_temp
         self.malt_ingred_stage = malt_ingred_stage
@@ -95,7 +95,7 @@ def populate_malts(json_malts):
     for m in json_malts:
         malt_id = m["malt_id"]
         malt_ingred_qty = m["malt_ingred_qty"]
-        malt_ingred_time = m["malt_ingred_time"] if 'malt_ingred_time' in m else None 
+        malt_ingred_time = int(m["malt_ingred_time"]) if 'malt_ingred_time' in m else None 
         malt_ingred_type = m["malt_ingred_type"] if 'malt_ingred_type' in m else None
         malt_ingred_temp = m["malt_ingred_temp"] if 'malt_ingred_temp' in m else None
         malt_ingred_stage = m["malt_ingred_stage"] if 'malt_ingred_stage' in m else None
